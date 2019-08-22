@@ -1,0 +1,16 @@
+
+logging:
+  level:
+    com.dennis: debug                #指定目录的日志级别
+    org.springframework: debug      #Spring框架日志级别 debug info warn error fatal
+
+server:
+  port: 80
+
+#HikariCP数据源设置
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/saas-export-100?characterEncoding=utf-8
+    username: root
+    password: root
