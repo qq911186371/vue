@@ -1,13 +1,13 @@
 package com.dennis.controller;
 
 import com.dennis.domain.Result;
-import com.dennis.domain.SsCompany;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -20,14 +20,18 @@ public class ConsumerController {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private DiscoveryClient discoveryClient;
+
     @GetMapping("/{id}")
+    @HystrixCommand(fallbackMethod = "findByIdFallback")
     public Result findById(@PathVariable("id") String id) {
-        try {
-            String url = "http://localhost:8081/company/" + id;
-            Result result = restTemplate.getForObject(url, Result.class);
-            return result;
-        } catch (RestClientException e) {
-            return new Result(true, "查询失败", null);
-        }
+        String url = "http://company-service/company/" + id;
+        Result result = restTemplate.getForObject(url, Result.class);
+        return result;
+    }
+
+    public Result findByIdFallback(String id) {
+        return new Result(false, "远程服务调用失败", null);
     }
 }

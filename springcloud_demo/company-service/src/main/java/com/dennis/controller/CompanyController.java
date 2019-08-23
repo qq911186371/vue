@@ -42,6 +42,7 @@ public class CompanyController {
     @GetMapping("/{id}")
     public Result findOne(@PathVariable(name = "id") String id) {
         try {
+            System.out.println("查询用户");
             SsCompany ssCompany = companyService.selectById(id);
             return new Result(true, "查询单个用户成功", ssCompany);
         } catch (Exception e) {
